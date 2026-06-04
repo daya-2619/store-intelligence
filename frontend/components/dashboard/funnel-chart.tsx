@@ -24,7 +24,8 @@ export function FunnelChart({ funnel }: { funnel: any }) {
       
       <div className="flex-1 flex flex-col justify-center space-y-4 relative">
         {funnelData.map((step, index) => {
-          const width = `${Math.max(step.percentage, 10)}%`;
+          const percentage = Number(step.percentage) || 0;
+          const width = `${Math.max(percentage, 10)}%`;
           return (
             <div key={index} className="relative group">
               {/* Drop-off line to next step */}
