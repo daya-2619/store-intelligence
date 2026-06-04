@@ -18,7 +18,7 @@ pydantic_core==2.46.4
 
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
-
+psycopg2-binary==2.9.10
 SQLAlchemy==2.0.50
 psycopg[binary]==3.3.4
 
