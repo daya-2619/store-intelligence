@@ -13,3 +13,10 @@ The backend is a `FastAPI` service built around SQLAlchemy Core. Complex calcula
 
 ## 4. Real-Time WebSockets
 For mission-critical live metrics (active visitor counts, queue lengths, live camera health), the backend opens a `WebSocket` connection with the Next.js frontend. Data is parsed and pushed out to connected clients instantly.
+
+## 5. AI-Assisted Decisions
+Throughout the development of Store Intelligence, AI tools were utilized to accelerate engineering and validate architectural choices. Key areas of AI assistance included:
+- **Architecture Validation**: Used AI to compare message brokers (RabbitMQ vs Kafka) for edge telemetry, confirming RabbitMQ's suitability for high-speed ephemeral event buffering.
+- **Query Optimization**: AI assisted in crafting the highly optimized SQLAlchemy Core `UPSERT` statements to handle 500 events per second without ORM overhead.
+- **Frontend Scaffolding**: Leveraged AI for rapid scaffolding of the Next.js real-time dashboard and WebSocket client logic.
+- **Documentation**: AI was used to draft and structure the README, DESIGN, and CHOICES documentation for clarity and completeness.
