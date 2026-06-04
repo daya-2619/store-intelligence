@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RetailIntelligence | Enterprise AI Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Geist:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#4c1a00",
+                      "outline": "#8b90a0",
+                      "secondary": "#4edea3",
+                      "primary": "#adc6ff",
+                      "surface-container-low": "#181c23",
+                      "on-tertiary": "#571e00",
+                      "outline-variant": "#414755",
+                      "inverse-on-surface": "#2d3039",
+                      "surface-container": "#1c2028",
+                      "tertiary-container": "#ef6719",
+                      "on-secondary-fixed": "#002113",
+                      "primary-container": "#4b8eff",
+                      "primary-fixed": "#d8e2ff",
+                      "surface-tint": "#adc6ff",
+                      "surface-container-high": "#272a32",
+                      "tertiary-fixed": "#ffdbcc",
+                      "secondary-container": "#00a572",
+                      "on-tertiary-fixed-variant": "#7c2e00",
+                      "on-tertiary-fixed": "#351000",
+                      "tertiary-fixed-dim": "#ffb595",
+                      "on-primary-container": "#00285c",
+                      "on-secondary-container": "#00311f",
+                      "on-primary-fixed": "#001a41",
+                      "background": "#10131b",
+                      "on-surface-variant": "#c1c6d7",
+                      "surface-variant": "#31353d",
+                      "inverse-primary": "#005bc1",
+                      "on-background": "#e0e2ed",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-surface": "#e0e2ed",
+                      "secondary-fixed-dim": "#4edea3",
+                      "surface-dim": "#10131b",
+                      "inverse-surface": "#e0e2ed",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-secondary-fixed-variant": "#005236",
+                      "on-primary": "#002e69",
+                      "surface-container-lowest": "#0b0e16",
+                      "error-container": "#93000a",
+                      "tertiary": "#ffb595",
+                      "on-primary-fixed-variant": "#004493",
+                      "on-secondary": "#003824",
+                      "surface-container-highest": "#31353d",
+                      "on-error-container": "#ffdad6",
+                      "surface-bright": "#363942",
+                      "error": "#ffb4ab",
+                      "on-error": "#690005",
+                      "surface": "#10131b"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "container-max": "1440px",
+                      "unit": "4px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Geist"],
+                      "headline-md-mobile": ["Geist"],
+                      "body-md": ["Inter"],
+                      "headline-sm": ["Geist"],
+                      "body-lg": ["Inter"],
+                      "label-mono": ["JetBrains Mono"],
+                      "headline-md": ["Geist"]
+              },
+              "fontSize": {
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-mono": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #030303;
+            color: #e0e2ed;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top-color: rgba(255, 255, 255, 0.15);
+        }
+        .glass-modal {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 64px 64px -32px rgba(0, 0, 0, 0.8);
+        }
+        .glow-primary {
+            background: radial-gradient(circle at center, rgba(173, 198, 255, 0.1) 0%, transparent 70%);
+        }
+        .glow-secondary {
+            background: radial-gradient(circle at center, rgba(78, 222, 163, 0.1) 0%, transparent 70%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .heatmap-overlay {
+            background: radial-gradient(circle at 30% 40%, rgba(255, 78, 80, 0.4) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 60%, rgba(252, 182, 159, 0.3) 0%, transparent 35%),
+                        radial-gradient(circle at 50% 20%, rgba(255, 255, 100, 0.2) 0%, transparent 30%);
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body class="font-body-md text-body-md selection:bg-primary/30">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full z-40 flex flex-col h-screen w-64 border-r border-outline-variant/10 bg-surface-container/30 backdrop-blur-[20px] backdrop-blur-[20px] border-r border-white/10 shadow-2xl">
+<div class="p-6">
+<h1 class="font-display-lg text-display-lg font-bold text-primary mb-1">RetailIntelligence</h1>
+<p class="font-headline-sm text-headline-sm opacity-50">Enterprise AI</p>
+</div>
+<nav class="flex-1 px-4 py-6 space-y-2">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary font-bold border-l-2 border-secondary bg-secondary-container/10 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">filter_alt</span>
+<span>Funnel</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">wb_sunny</span>
+<span>Heatmap</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">videocam</span>
+<span>CCTV</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">error</span>
+<span>Anomalies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">description</span>
+<span>Reports</span>
+</a>
+</nav>
+<div class="px-4 py-6 border-t border-white/5 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 transition-colors active:scale-95 duration-150">
+<img alt="Profile" class="w-8 h-8 rounded-full border border-white/20" data-alt="A professional headshot of a young male executive in a modern high-tech environment. He is wearing a dark, minimal turtleneck. The background is softly blurred with subtle architectural glass reflections and cool blue lighting, maintaining a premium enterprise software aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAC0YhJBeVSINX8b0PjfIl2k7iNvShWmY5_QVPsYCY9teZWPIZyvcCkAO6RsAf_u3oN9c2rH2uuSiahQBVBKJ9uakviurdRliLc_GGmQmDJitDpQnjpCC4UWviGnc0LBfoqE-INa7BavjrEO9DjROAbm361q4FyE_Jnxhed-a72XYyuK2IG3Gox3yRKy-Mu2fKhea4N7zMJtStIxt6ZkiMOyM8lzeD6ZsIJ0nm9HOao9KWS1d7WV4VzqCud0a1T3IKU1DfzOUU7gEkk"/>
+<span>Profile</span>
+</div>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-50 flex items-center justify-between px-margin-desktop w-full h-16 border-b border-outline-variant/10 bg-surface/10 backdrop-blur-[40px] backdrop-blur-[40px] border-b border-white/5 shadow-sm">
+<div class="flex items-center flex-1">
+<div class="relative w-96 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-full py-1.5 pl-10 pr-4 text-body-md focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all" placeholder="Search analytics, cameras, or reports..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="material-symbols-outlined hover:text-primary transition-all active:opacity-80">notifications</button>
+<button class="material-symbols-outlined hover:text-primary transition-all active:opacity-80">settings</button>
+<button class="material-symbols-outlined hover:text-primary transition-all active:opacity-80">sensors</button>
+</div>
+<div class="h-6 w-px bg-white/10"></div>
+<div class="flex items-center gap-3">
+<span class="text-label-mono text-outline">STORE_042_NYC</span>
+<div class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(78,222,163,0.5)]"></div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 px-margin-desktop pb-margin-desktop min-h-screen">
+<!-- KPI Section (Top) -->
+<div class="grid grid-cols-12 gap-gutter mb-gutter">
+<!-- Store Health Hero -->
+<div class="col-span-4 glass-card p-6 rounded-xl flex items-center gap-6 relative overflow-hidden group">
+<div class="absolute inset-0 glow-secondary -z-10 opacity-50"></div>
+<div class="relative w-32 h-32">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<circle class="text-white/5 stroke-current" cx="50" cy="50" fill="transparent" r="42" stroke-width="8"></circle>
+<circle class="text-secondary stroke-current progress-ring__circle" cx="50" cy="50" fill="transparent" r="42" stroke-dasharray="264" stroke-dashoffset="21" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline-md text-headline-md">92</span>
+<span class="text-label-mono text-[10px] opacity-50 uppercase tracking-widest">/100</span>
+</div>
+</div>
+<div>
+<h3 class="text-label-mono text-secondary mb-1">HEALTH SCORE</h3>
+<p class="font-headline-md text-headline-md font-bold mb-2">Excellent</p>
+<p class="text-body-md text-on-surface-variant">System integrity at peak performance. No critical bottlenecks detected in the last 4 hours.</p>
+</div>
+</div>
+<!-- Metric Cards -->
+<div class="col-span-8 grid grid-cols-5 gap-gutter">
+<!-- Active Visitors -->
+<div class="glass-card p-4 rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-primary">groups</span>
+<span class="text-label-mono text-secondary text-[11px]">+12%</span>
+</div>
+<div>
+<p class="text-label-mono text-outline text-[11px] mb-1">ACTIVE VISITORS</p>
+<p class="font-headline-md text-headline-md">482</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 20">
+<path class="text-primary opacity-50" d="M0 15 Q 10 5, 20 12 T 40 8 T 60 15 T 80 5 T 100 10" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Queue Size -->
+<div class="glass-card p-4 rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-tertiary">hourglass_empty</span>
+<span class="text-label-mono text-error text-[11px]">+4%</span>
+</div>
+<div>
+<p class="text-label-mono text-outline text-[11px] mb-1">QUEUE SIZE</p>
+<p class="font-headline-md text-headline-md">14</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 20">
+<path class="text-tertiary opacity-50" d="M0 5 Q 10 15, 20 10 T 40 18 T 60 12 T 80 18 T 100 15" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Avg Dwell Time -->
+<div class="glass-card p-4 rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<span class="text-label-mono text-secondary text-[11px]">-2m</span>
+</div>
+<div>
+<p class="text-label-mono text-outline text-[11px] mb-1">AVG DWELL</p>
+<p class="font-headline-md text-headline-md">18m</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 20">
+<path class="text-primary opacity-50" d="M0 10 Q 15 5, 30 10 T 60 5 T 90 10 T 100 8" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Conv Rate -->
+<div class="glass-card p-4 rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-secondary">shopping_cart</span>
+<span class="text-label-mono text-secondary text-[11px]">+0.8%</span>
+</div>
+<div>
+<p class="text-label-mono text-outline text-[11px] mb-1">CONV RATE</p>
+<p class="font-headline-md text-headline-md">34.2%</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 20">
+<path class="text-secondary opacity-50" d="M0 15 L 20 12 L 40 10 L 60 8 L 80 5 L 100 2" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Revenue -->
+<div class="glass-card p-4 rounded-xl flex flex-col justify-between overflow-hidden relative">
+<div class="absolute inset-0 glow-primary opacity-30 -z-10"></div>
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-primary">payments</span>
+<span class="text-label-mono text-secondary text-[11px]">+8%</span>
+</div>
+<div>
+<p class="text-label-mono text-outline text-[11px] mb-1">HOURLY REV</p>
+<p class="font-headline-md text-headline-md">$12.4k</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 20">
+<path class="text-primary opacity-50" d="M0 20 L 10 18 L 30 15 L 50 12 L 70 8 L 90 5 L 100 0" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Grid -->
+<div class="grid grid-cols-12 gap-gutter mb-gutter">
+<!-- Funnel Analytics -->
+<div class="col-span-7 glass-card p-8 rounded-xl">
+<div class="flex justify-between items-center mb-10">
+<h2 class="font-headline-md text-headline-md">Customer Funnel Analytics</h2>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-white/5 rounded-full text-label-mono text-xs border border-white/10">TODAY</button>
+<button class="px-3 py-1 bg-primary/10 text-primary rounded-full text-label-mono text-xs border border-primary/20">LIVE</button>
+</div>
+</div>
+<div class="space-y-6 relative">
+<!-- Funnel Steps -->
+<div class="flex items-center gap-6">
+<div class="w-full h-12 bg-primary/20 rounded-lg relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary opacity-20 w-full"></div>
+<div class="relative z-10 h-full flex items-center px-4 justify-between">
+<span class="font-label-mono text-xs text-primary-fixed">ENTRY</span>
+<span class="font-bold">2,480</span>
+</div>
+</div>
+<div class="w-24 text-center">
+<span class="text-label-mono text-xs text-outline">100%</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="w-[78%] h-12 bg-primary/20 rounded-lg relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary opacity-20 w-full"></div>
+<div class="relative z-10 h-full flex items-center px-4 justify-between">
+<span class="font-label-mono text-xs text-primary-fixed">BROWSING</span>
+<span class="font-bold">1,940</span>
+</div>
+</div>
+<div class="w-24 text-center">
+<span class="text-label-mono text-xs text-outline">78%</span>
+<div class="text-[10px] text-error">-22%</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="w-[52%] h-12 bg-primary/20 rounded-lg relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary opacity-20 w-full"></div>
+<div class="relative z-10 h-full flex items-center px-4 justify-between">
+<span class="font-label-mono text-xs text-primary-fixed">ENGAGED</span>
+<span class="font-bold">1,280</span>
+</div>
+</div>
+<div class="w-24 text-center">
+<span class="text-label-mono text-xs text-outline">52%</span>
+<div class="text-[10px] text-error">-26%</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="w-[34%] h-12 bg-secondary/20 rounded-lg relative overflow-hidden group">
+<div class="absolute inset-0 bg-secondary opacity-20 w-full"></div>
+<div class="relative z-10 h-full flex items-center px-4 justify-between">
+<span class="font-label-mono text-xs text-secondary-fixed">PURCHASE</span>
+<span class="font-bold">842</span>
+</div>
+</div>
+<div class="w-24 text-center">
+<span class="text-label-mono text-xs text-outline">34%</span>
+<div class="text-[10px] text-error">-18%</div>
+</div>
+</div>
+<!-- Drop-off Insight -->
+<div class="mt-8 p-4 bg-error-container/10 border border-error/20 rounded-xl flex items-start gap-4">
+<span class="material-symbols-outlined text-error mt-0.5">warning</span>
+<div>
+<h4 class="font-bold text-error mb-1">Critical Drop-off Point</h4>
+<p class="text-sm opacity-80">42% of users leave before billing. Analysis suggests checkout queue length exceeding 4 minutes is the primary driver.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Insights -->
+<div class="col-span-5 flex flex-col gap-gutter">
+<div class="flex justify-between items-center px-2">
+<h2 class="font-headline-md text-headline-md flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                        AI Detections
+                    </h2>
+<span class="text-label-mono text-xs text-outline">REAL-TIME</span>
+</div>
+<div class="glass-card p-5 rounded-xl flex gap-4 hover:border-primary/40 transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">group_work</span>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="text-label-mono text-[11px] text-primary">TRAFFIC ANOMALY</span>
+<span class="text-label-mono text-[10px] text-outline">2M AGO</span>
+</div>
+<h4 class="font-bold mb-1">Queue congestion near billing</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Wait time predicted to exceed 6 minutes. Suggest opening Register 4.</p>
+</div>
+</div>
+<div class="glass-card p-5 rounded-xl flex gap-4 hover:border-secondary/40 transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary shrink-0 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">storefront</span>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="text-label-mono text-[11px] text-secondary">HOTZONE ALERT</span>
+<span class="text-label-mono text-[10px] text-outline">12M AGO</span>
+</div>
+<h4 class="font-bold mb-1">High dwell in skincare section</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Engagement up 40% vs baseline. Restock team notified for Serum X.</p>
+</div>
+</div>
+<div class="glass-card p-5 rounded-xl flex gap-4 hover:border-tertiary/40 transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-lg bg-tertiary/10 flex items-center justify-center text-tertiary shrink-0 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">security</span>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="text-label-mono text-[11px] text-tertiary">LOSS PREVENTION</span>
+<span class="text-label-mono text-[10px] text-outline">1H AGO</span>
+</div>
+<h4 class="font-bold mb-1">Unusual pathing detected</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Aisle 4, Zone C. Subject dwelled for 4m with no interaction.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Heatmap View -->
+<div class="col-span-8 glass-card p-8 rounded-xl overflow-hidden flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md">Floorplan Heatmap</h2>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+<span class="text-label-mono text-[10px] text-outline">HIGH</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+<span class="text-label-mono text-[10px] text-outline">MED</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-blue-500/80"></div>
+<span class="text-label-mono text-[10px] text-outline">LOW</span>
+</div>
+</div>
+</div>
+<div class="flex-1 relative rounded-lg bg-surface-container-lowest overflow-hidden border border-white/5 min-h-[300px]">
+<img alt="Store Layout" class="w-full h-full object-cover opacity-20 grayscale" data-alt="A top-down architectural floor plan blueprint of a modern retail store. The plan shows detailed shelf layouts, cashier desks, and entryways. The drawing is minimal and technical with clean white lines on a deep charcoal background, conveying a high-tech analysis view." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFsD2ll0oI1DEg_Ywr1zBd2La2Q8_xcEEHGKDldbNPUe6TEDNRCNLnCRlxWu-oS0zWD0H1NDcUU4X7Ew5Q6Mr8ruiMVgbcHzDBI5UdHwU81SzS5uA57I7iF2hH2SeG0kkRJ6tFEH7w3gmuB80m66dcbgi_UNjForzUrw9w_brVBl4QRUfp33EP8SUYo_rHfv8L8ILzjboAqgzkjJhK03bIkDKpdEeMc1HQ4y-XqUMjI4w8_8VtgUwNdPvamVWwfol9AAfK3hzCpRPt"/>
+<div class="absolute inset-0 heatmap-overlay mix-blend-screen opacity-70"></div>
+<!-- Floor labels -->
+<div class="absolute top-4 left-4 p-2 bg-black/50 backdrop-blur-md rounded border border-white/10">
+<span class="text-label-mono text-[10px]">SECTION A: APPAREL</span>
+</div>
+<div class="absolute bottom-10 right-20 p-2 bg-black/50 backdrop-blur-md rounded border border-white/10">
+<span class="text-label-mono text-[10px]">SECTION D: CHECKOUT</span>
+</div>
+</div>
+</div>
+<!-- Live CCTV & Alerts -->
+<div class="col-span-4 flex flex-col gap-gutter">
+<!-- CCTV Grid -->
+<div class="glass-card p-4 rounded-xl">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-label-mono text-xs font-bold uppercase tracking-widest">Live Streams</h3>
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></div>
+<span class="text-[10px] font-bold">REC</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="aspect-video relative bg-black rounded-lg overflow-hidden group cursor-pointer">
+<img alt="CCTV 1" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A low-angle CCTV security camera view of a modern clothing store aisle. The lighting is crisp and cool-toned. Shoppers are blurred in motion, emphasizing the surveillance aesthetic. High-contrast blacks and vibrant interior highlights give it a cinematic security feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxPEmfDobvdCMz1izYpXbpr5S2yRsbotJ8ZCAsVt-f7X3iAJG-oD-uaqXCB6omix592KKgshe53XQL1e5t-FGUP2WLAN2_3uO0AuTtpZblPrI3OtTeorfvFrS-oXC0oyHWtT4pqr9Zz651yN9a3kXbF-RxPPaj5Sg3FVm7aJPyQBupvAex7q8D7hgddzO_-Zs9hy3q3Iq9iDyfcHpjiSeLm1hXNuEU-9zZ8ieFKTeaIVcvWysuiXHw7qSG2g1OMqhrgOL0R9kDGfY0"/>
+<div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-mono">CAM_01</div>
+<div class="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<div class="aspect-video relative bg-black rounded-lg overflow-hidden group cursor-pointer">
+<img alt="CCTV 2" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A fish-eye lens security camera view looking down at a grocery store checkout area. The scene is illuminated by overhead fluorescent lights, creating a bright but sterile atmosphere. The floor tiles and checkout counters are clearly visible with a clinical, high-definition surveillance style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyCxBKql1U3Sh-KOwf5wBt2CdAGDlbIumtkGhpXswF3dfCHIlEAH81HLMv2BFL9grpJFhZMQZQHRYtMHqTxupva8Cvb6-nsZvywJeXIL3ctm10ugJUwT8C4sbERhwxMydOFPpsIDSsKT6xmhNfl10CKjRffSes2sBrZuPtR4-ssCwuGoqNLMAmHGRyeQgNVsDBcpolDalBQ_vCtf0ISbjZqirrkksyNP4LkmmTTgXjBMfjbB2t-1jWiuIS6PaOqhKQFZCtVvV_aNi0"/>
+<div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-mono">CAM_02</div>
+<div class="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<div class="aspect-video relative bg-black rounded-lg overflow-hidden group cursor-pointer">
+<img alt="CCTV 3" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A high-angle surveillance view of a luxury department store entrance. Polished marble floors reflect the architectural lighting. The scene is dominated by deep shadows and bright white highlights, creating a premium but secured atmosphere for a high-end retail environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeE_qwbqmcurse251HK40L9_xAd_lx1ELwTqRVquaMJlwfT_ZXjKswjbkwM55HCmi-j13hIZxNe6DOkckQk13rJkeHGsdtTZPOQeUckI10D2Yg1R-bAJ_r8K07oFgaZFMmGnLOkk0q-0B71f8r1S1_gBAxUFyTbAVW-H922zilIjwV1mg8r9TZ_4irXoM7OAs_5nV7KRJDZDsCIpjiL9KjixMP--8smvkC64vIgV7dr07mqq6dtuY97xxlLbAVAouVTSt5V38TQ8sm"/>
+<div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-mono">CAM_03</div>
+<div class="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-error"></div>
+</div>
+<div class="aspect-video relative bg-black rounded-lg overflow-hidden group cursor-pointer">
+<img alt="CCTV 4" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A security footage view of the staff-only stockroom in a modern retail warehouse. Steel shelving units are filled with neat boxes. The lighting is harsh and direct, with a slight greenish tint common in security video feeds, conveying a behind-the-scenes operational mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUbeZeD4Z9uSD5RYufp3BlJxHxL0MkkzOSHotxm5_ER1aeMXMtkIYRoSc8FXGikKP5zKe2LY5Yolzj_y7HkwGYEHuMN7SF1zoDNJ1KjXmAUu08J-2WzTVIbHlLqb7JzXajVJKg-40Jv7NpQaYupCGAotXvM4brYhrS3mAC8rDkcMjgvlL1FDX9wuSZ1PkZafkY8eihaalgHUloh_eA11mFeUwsf8OSTeVXi2xT-uhw0wRCimGgCsi77Y1va8Xyzxpz3SzPCUYlpVu5"/>
+<div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-mono">CAM_04</div>
+<div class="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+</div>
+</div>
+<!-- Alert Sidebar -->
+<div class="glass-card flex-1 p-5 rounded-xl flex flex-col h-full overflow-hidden">
+<h3 class="text-label-mono text-xs font-bold uppercase tracking-widest mb-4">Security Feed</h3>
+<div class="space-y-4 overflow-y-auto pr-2 custom-scrollbar">
+<div class="flex gap-3 items-start border-l-2 border-error pl-3 py-1">
+<div>
+<div class="flex items-center gap-2 mb-0.5">
+<span class="text-label-mono text-[9px] text-error font-bold">CRITICAL</span>
+<span class="text-[9px] text-outline">14:22:01</span>
+</div>
+<p class="text-[11px] leading-tight">Cam_03: Unidentified access to Restricted Stockroom B.</p>
+</div>
+</div>
+<div class="flex gap-3 items-start border-l-2 border-tertiary pl-3 py-1">
+<div>
+<div class="flex items-center gap-2 mb-0.5">
+<span class="text-label-mono text-[9px] text-tertiary font-bold">WARNING</span>
+<span class="text-[9px] text-outline">14:18:45</span>
+</div>
+<p class="text-[11px] leading-tight">Checkout Lane 2: Queue length 8+ people. Response required.</p>
+</div>
+</div>
+<div class="flex gap-3 items-start border-l-2 border-primary pl-3 py-1 opacity-70">
+<div>
+<div class="flex items-center gap-2 mb-0.5">
+<span class="text-label-mono text-[9px] text-primary font-bold">INFO</span>
+<span class="text-[9px] text-outline">14:05:12</span>
+</div>
+<p class="text-[11px] leading-tight">Shift change completed. Store Manager ID: 9422 active.</p>
+</div>
+</div>
+<div class="flex gap-3 items-start border-l-2 border-primary pl-3 py-1 opacity-70">
+<div>
+<div class="flex items-center gap-2 mb-0.5">
+<span class="text-label-mono text-[9px] text-primary font-bold">INFO</span>
+<span class="text-[9px] text-outline">13:58:30</span>
+</div>
+<p class="text-[11px] leading-tight">System integrity check passed. 24 node cluster synchronized.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interaction for hover states and progress ring animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const circle = document.querySelector('.progress-ring__circle');
+            if (circle) {
+                const radius = circle.r.baseVal.value;
+                const circumference = radius * 2 * Math.PI;
+                circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                
+                // Animate to 92%
+                const offset = circumference - (92 / 100 * circumference);
+                circle.style.strokeDashoffset = offset;
+            }
+
+            // Simple parallax effect for cards on mouse move
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / 25;
+                    const rotateY = (centerX - x) / 25;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+                });
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html><html class="light" lang="en" style="--mouse-x: 758px; --mouse-y: 1434px;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>RetailIntelligence | Enterprise AI Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Geist:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#40916c",
+                      "secondary": "#2d6a4f",
+                      "background": "#e8fff0",
+                      "surface": "#f2fff7",
+                      "on-surface": "#081c15",
+                      "on-surface-variant": "#2d3a35",
+                      "outline": "#b8e4cc",
+                      "outline-variant": "#d1fee5",
+                      "surface-container": "#d1fee5",
+                      "surface-container-low": "#e8fff0",
+                      "surface-container-high": "#b8e4cc",
+                      "tertiary": "#ef6719",
+                      "error": "#93000a",
+                      "on-primary": "#FFFFFF",
+                      "primary-container": "#d1fee5",
+                      "secondary-container": "#b8e4cc"
+              },
+              "borderRadius": {
+                      "DEFAULT": "9999px",
+                      "lg": "9999px",
+                      "xl": "9999px",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "container-max": "1440px",
+                      "unit": "4px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Geist"],
+                      "headline-md-mobile": ["Geist"],
+                      "body-md": ["Inter"],
+                      "headline-sm": ["Geist"],
+                      "body-lg": ["Inter"],
+                      "label-mono": ["JetBrains Mono"],
+                      "headline-md": ["Geist"]
+              },
+              "fontSize": {
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-mono": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #e8fff0;
+            color: #081c15;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        #cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(circle 400px at var(--mouse-x, -999px) var(--mouse-y, -999px), rgba(64, 145, 108, 0.05), transparent 80%);
+        }
+
+        .glass-card {
+            background: rgba(242, 255, 247, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid #b8e4cc;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+            will-change: transform, border-color;
+        }
+        
+        .glass-card:hover {
+            border-color: #40916c;
+            box-shadow: 0 10px 15px -3px rgba(64, 145, 108, 0.1);
+            z-index: 10;
+        }
+
+        .glow-secondary {
+            background: radial-gradient(circle at center, rgba(64, 145, 108, 0.08) 0%, transparent 70%);
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke-dasharray: 264;
+            stroke-dashoffset: 264;
+        }
+
+        .heatmap-overlay {
+            background: radial-gradient(circle at 30% 40%, rgba(147, 0, 10, 0.3) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 60%, rgba(245, 158, 11, 0.2) 0%, transparent 35%),
+                        radial-gradient(circle at 50% 20%, rgba(64, 145, 108, 0.15) 0%, transparent 30%);
+        }
+
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        .ai-insight-card {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .ai-insight-card.visible {
+            animation: fadeSlideUp 0.6s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #b8e4cc; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-body-md text-body-md selection:bg-primary/20">
+<!-- Background Glow -->
+<div id="cursor-glow"></div>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full z-40 flex flex-col w-64 border-r border-outline bg-surface-container-low/90 backdrop-blur-md shadow-sm">
+<div class="p-6">
+<h1 class="font-display-lg text-display-lg font-bold text-primary mb-1 tracking-tight" style="font-size: 24px; line-height: 32px;">Store-Intelligence</h1>
+<p class="font-label-mono text-[10px] text-on-surface-variant/60 uppercase tracking-widest">Enterprise AI Solution</p>
+</div>
+<nav class="flex-1 px-4 py-6 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-white font-bold bg-primary transition-all active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-on-surface-variant font-medium hover:bg-primary/10 transition-all active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-primary/60">filter_alt</span>
+<span class="">Funnel</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-on-surface-variant font-medium hover:bg-primary/10 transition-all active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-primary/60">wb_sunny</span>
+<span class="">Heatmap</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-on-surface-variant font-medium hover:bg-primary/10 transition-all active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-primary/60">videocam</span>
+<span class="">CCTV</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-on-surface-variant font-medium hover:bg-primary/10 transition-all active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-primary/60">error</span>
+<span class="">Anomalies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-on-surface-variant font-medium hover:bg-primary/10 transition-all active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-primary/60">description</span>
+<span class="">Reports</span>
+</a>
+</nav>
+<div class="px-4 py-6 border-t border-outline space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-on-surface-variant font-medium hover:bg-primary/10 transition-all active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-primary/60">settings</span>
+<span class="">Settings</span>
+</a>
+<div class="flex items-center gap-3 px-4 py-3 rounded-full text-on-surface-variant font-medium hover:bg-primary/10 transition-all cursor-pointer">
+<img alt="Profile" class="w-8 h-8 rounded-full border border-outline" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAC0YhJBeVSINX8b0PjfIl2k7iNvShWmY5_QVPsYCY9teZWPIZyvcCkAO6RsAf_u3oN9c2rH2uuSiahQBVBKJ9uakviurdRliLc_GGmQmDJitDpQnjpCC4UWviGnc0LBfoqE-INa7BavjrEO9DjROAbm361q4FyE_Jnxhed-a72XYyuK2IG3Gox3yRKy-Mu2fKhea4N7zMJtStIxt6ZkiMOyM8lzeD6ZsIJ0nm9HOao9KWS1d7WV4VzqCud0a1T3IKU1DfzOUU7gEkk">
+<span class="">Profile</span>
+</div>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-50 flex items-center justify-between px-margin-desktop h-16 border-b border-outline bg-surface/80 backdrop-blur-md shadow-sm">
+<div class="flex items-center flex-1">
+<div class="relative w-96 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/60 group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-primary/5 border border-outline rounded-full py-1.5 pl-10 pr-4 text-body-md focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-on-surface-variant/40" placeholder="Search analytics, cameras, or reports..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="material-symbols-outlined hover:text-primary transition-all">notifications</button>
+<button class="material-symbols-outlined hover:text-primary transition-all">settings</button>
+<button class="material-symbols-outlined hover:text-primary transition-all">sensors</button>
+</div>
+<div class="h-6 w-px bg-outline"></div>
+<div class="flex items-center gap-3">
+<span class="text-label-mono text-on-surface-variant/60">STORE_042_NYC</span>
+<div class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse-subtle shadow-[0_0_8px_rgba(64,145,108,0.4)]"></div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 px-margin-desktop pb-margin-desktop min-h-screen relative z-10">
+<!-- KPI Section -->
+<div class="grid grid-cols-12 gap-gutter mb-gutter">
+<!-- Store Health Hero -->
+<div class="col-span-4 glass-card p-6 rounded-xl flex items-center gap-6 relative overflow-hidden group" style="transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);">
+<div class="absolute inset-0 glow-secondary -z-10 opacity-60"></div>
+<div class="relative w-32 h-32">
+<svg class="w-full h-full" viewBox="0 0 100 100">
+<circle class="text-primary/10 stroke-current" cx="50" cy="50" fill="transparent" r="42" stroke-width="8"></circle>
+<circle class="text-primary stroke-current progress-ring__circle" cx="50" cy="50" fill="transparent" id="health-progress" r="42" stroke-linecap="round" stroke-width="8" style="stroke-dashoffset: 21.12;"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline-md text-headline-md text-on-surface animate-number" data-target="92">92</span>
+<span class="text-label-mono text-[10px] text-on-surface-variant/50 uppercase tracking-widest">/100</span>
+</div>
+</div>
+<div>
+<h3 class="text-label-mono text-primary font-bold mb-1">HEALTH SCORE</h3>
+<p class="font-headline-md text-headline-md text-on-surface font-bold mb-2">Excellent</p>
+<p class="text-body-md text-on-surface-variant">System integrity at peak performance.</p>
+</div>
+</div>
+<!-- Metric Cards -->
+<div class="col-span-8 grid grid-cols-5 gap-gutter">
+<!-- Active Visitors -->
+<div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-primary">groups</span>
+<span class="text-label-mono text-primary text-[11px] font-bold bg-primary/10 px-1.5 py-0.5 rounded">+12%</span>
+</div>
+<div>
+<p class="text-label-mono text-on-surface-variant/60 text-[10px] mb-1 uppercase tracking-wider">Active Visitors</p>
+<p class="font-headline-md text-headline-md text-on-surface animate-number" data-target="482">482</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 20">
+<path class="text-primary/40" d="M0 15 Q 10 5, 20 12 T 40 8 T 60 15 T 80 5 T 100 10" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+<!-- Queue Size -->
+<div class="glass-card p-5 rounded-2xl flex flex-col justify-between" style="transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-tertiary">hourglass_empty</span>
+<span class="text-label-mono text-error text-[11px] font-bold bg-error/10 px-1.5 py-0.5 rounded">+4%</span>
+</div>
+<div>
+<p class="text-label-mono text-on-surface-variant/60 text-[10px] mb-1 uppercase tracking-wider">Queue Size</p>
+<p class="font-headline-md text-headline-md text-on-surface animate-number" data-target="14">14</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 20">
+<path class="text-tertiary/40" d="M0 5 Q 10 15, 20 10 T 40 18 T 60 12 T 80 18 T 100 15" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+<!-- Avg Dwell Time -->
+<div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<span class="text-label-mono text-primary text-[11px] font-bold bg-primary/10 px-1.5 py-0.5 rounded">-2m</span>
+</div>
+<div>
+<p class="text-label-mono text-on-surface-variant/60 text-[10px] mb-1 uppercase tracking-wider">Avg Dwell</p>
+<p class="font-headline-md text-headline-md text-on-surface"><span class="animate-number" data-target="18">18</span>m</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 20">
+<path class="text-primary/40" d="M0 10 Q 15 5, 30 10 T 60 5 T 90 10 T 100 8" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+<!-- Conv Rate -->
+<div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-secondary">shopping_cart</span>
+<span class="text-label-mono text-primary text-[11px] font-bold bg-primary/10 px-1.5 py-0.5 rounded">+0.8%</span>
+</div>
+<div>
+<p class="text-label-mono text-on-surface-variant/60 text-[10px] mb-1 uppercase tracking-wider">Conv Rate</p>
+<p class="font-headline-md text-headline-md text-on-surface"><span class="animate-number" data-decimals="1" data-target="34.2">34.2</span>%</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 20">
+<path class="text-secondary/40" d="M0 15 L 20 12 L 40 10 L 60 8 L 80 5 L 100 2" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+<!-- Revenue -->
+<div class="glass-card p-5 rounded-2xl flex flex-col justify-between overflow-hidden relative">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-primary">payments</span>
+<span class="text-label-mono text-primary text-[11px] font-bold bg-primary/10 px-1.5 py-0.5 rounded">+8%</span>
+</div>
+<div>
+<p class="text-label-mono text-on-surface-variant/60 text-[10px] mb-1 uppercase tracking-wider">Hourly Rev</p>
+<p class="font-headline-md text-headline-md text-on-surface">$<span class="animate-number" data-decimals="1" data-target="12.4">12.4</span>k</p>
+</div>
+<div class="mt-4 h-8 w-full">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 20">
+<path class="text-primary/40" d="M0 20 L 10 18 L 30 15 L 50 12 L 70 8 L 90 5 L 100 0" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-gutter mb-gutter">
+<!-- Funnel Analytics -->
+<div class="col-span-7 glass-card p-8 rounded-xl" style="transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);">
+<div class="flex justify-between items-center mb-10">
+<h2 class="font-headline-md text-headline-md text-on-surface">Customer Funnel Analytics</h2>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-surface-container rounded-full text-label-mono text-xs border border-outline text-on-surface-variant">TODAY</button>
+<button class="px-3 py-1 bg-primary/10 text-primary rounded-full text-label-mono text-xs border border-primary/20 flex items-center gap-2 font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                        LIVE
+                    </button>
+</div>
+</div>
+<div class="space-y-6 relative"><div class="flex items-center gap-4">
+<div class="flex-1 h-12 bg-surface-container rounded-lg relative overflow-hidden border border-outline">
+<div class="absolute inset-0 bg-primary/10 w-full transition-transform duration-1000 origin-left" style="transform: scaleX(1)"></div>
+<div class="relative z-10 h-full flex items-center px-6 justify-between"><span class="font-label-mono text-xs text-on-surface-variant font-bold truncate">ENTRY</span><span class="font-bold text-on-surface ml-4">2,480</span></div>
+</div>
+<div class="w-16 text-right shrink-0">
+<span class="text-label-mono text-xs text-on-surface-variant font-bold">100%</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex-[0.78] h-12 bg-surface-container rounded-lg relative overflow-hidden border border-outline">
+<div class="absolute inset-0 bg-primary/10 w-full transition-transform duration-1000 origin-left" style="transform: scaleX(1)"></div>
+<div class="relative z-10 h-full flex items-center px-6 justify-between"><span class="font-label-mono text-xs text-on-surface-variant font-bold truncate">BROWSING</span><span class="font-bold text-on-surface ml-4">1,940</span></div>
+</div>
+<div class="w-16 text-right shrink-0">
+<span class="text-label-mono text-xs text-on-surface-variant font-bold">78%</span>
+<div class="text-[10px] text-error font-bold">-22%</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex-[0.52] h-12 bg-surface-container rounded-lg relative overflow-hidden border border-outline">
+<div class="absolute inset-0 bg-primary/10 w-full transition-transform duration-1000 origin-left" style="transform: scaleX(1)"></div>
+<div class="relative z-10 h-full flex items-center px-6 justify-between"><span class="font-label-mono text-xs text-on-surface-variant font-bold truncate">ENGAGED</span><span class="font-bold text-on-surface ml-4">1,280</span></div>
+</div>
+<div class="w-16 text-right shrink-0">
+<span class="text-label-mono text-xs text-on-surface-variant font-bold">52%</span>
+<div class="text-[10px] text-error font-bold">-26%</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex-[0.34] h-12 bg-primary/5 rounded-lg relative overflow-hidden border border-primary/10">
+<div class="absolute inset-0 bg-primary/10 w-full transition-transform duration-1000 origin-left" style="transform: scaleX(1)"></div>
+<div class="relative z-10 h-full flex items-center px-6 justify-between"><span class="font-label-mono text-xs text-primary font-bold truncate">PURCHASE</span><span class="font-bold text-on-surface ml-4">842</span></div>
+</div>
+<div class="w-16 text-right shrink-0">
+<span class="text-label-mono text-xs text-on-surface-variant font-bold">34%</span>
+<div class="text-[10px] text-error font-bold">-18%</div>
+</div>
+</div></div>
+</div>
+<!-- AI Insights -->
+<div class="col-span-5 flex flex-col gap-gutter" id="ai-insights-container"><div class="flex justify-between items-center px-2 mb-2">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: &quot;FILL&quot; 1;">auto_awesome</span>
+                    AI Detections
+                </h2>
+<span class="text-label-mono text-xs text-primary flex items-center gap-2 font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                    REAL-TIME
+                </span>
+</div>
+<div class="glass-card p-6 rounded-xl flex gap-4 border-l-4 border-l-primary hover:border-primary transition-all cursor-pointer group ai-insight-card visible">
+<div class="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform border border-primary/10">
+<span class="material-symbols-outlined">group_work</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<span class="text-label-mono text-[10px] text-primary font-bold">TRAFFIC ANOMALY</span>
+<span class="text-label-mono text-[9px] text-on-surface-variant/40">2M AGO</span>
+</div>
+<h4 class="font-bold mb-1 text-on-surface truncate">Queue congestion near billing</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Wait time predicted to exceed 6 minutes. Suggest opening Register 4.</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl flex gap-4 border-l-4 border-l-secondary hover:border-secondary transition-all cursor-pointer group ai-insight-card visible">
+<div class="w-12 h-12 rounded-full bg-secondary/5 flex items-center justify-center text-secondary shrink-0 group-hover:scale-110 transition-transform border border-secondary/10">
+<span class="material-symbols-outlined">storefront</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<span class="text-label-mono text-[10px] text-secondary font-bold">HOTZONE ALERT</span>
+<span class="text-label-mono text-[9px] text-on-surface-variant/40">12M AGO</span>
+</div>
+<h4 class="font-bold mb-1 text-on-surface truncate">High dwell in skincare section</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Engagement up 40% vs baseline. Restock team notified for Serum X.</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl flex gap-4 border-l-4 border-l-tertiary hover:border-tertiary transition-all cursor-pointer group ai-insight-card visible" style="transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);">
+<div class="w-12 h-12 rounded-full bg-tertiary/5 flex items-center justify-center text-tertiary shrink-0 group-hover:scale-110 transition-transform border border-tertiary/10">
+<span class="material-symbols-outlined">security</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<span class="text-label-mono text-[10px] text-tertiary font-bold">LOSS PREVENTION</span>
+<span class="text-label-mono text-[9px] text-on-surface-variant/40">1H AGO</span>
+</div>
+<h4 class="font-bold mb-1 text-on-surface truncate">Unusual pathing detected</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Aisle 4, Zone C. Subject dwelled for 4m with no interaction.</p>
+</div>
+</div></div>
+</div>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Heatmap View -->
+<div class="col-span-8 glass-card p-8 rounded-3xl overflow-hidden flex flex-col" style="transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px); border-radius: 1rem;"><div class="flex justify-between items-center mb-6"><h2 class="font-headline-md text-headline-md text-on-surface">Floorplan Heatmap</h2><div class="flex items-center gap-6"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div><span class="text-label-mono text-[10px] text-on-surface-variant/60 font-bold">HIGH</span></div><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-amber-400"></div><span class="text-label-mono text-[10px] text-on-surface-variant/60 font-bold">MED</span></div><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-primary"></div><span class="text-label-mono text-[10px] text-on-surface-variant/60 font-bold">LOW</span></div></div></div><div class="flex-1 relative rounded-2xl bg-white overflow-hidden border border-outline min-h-[400px] shadow-inner"><img alt="Store Layout" class="w-full h-full object-contain opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaVUkm-OfkCIZGX6o6fmu2VUbI3PTYSCCw1XwoMmBHOhXV5DIEVa2NKSdktHFber113cUi7n6jiLwlvQL8n4XLy3aNmVnhBhvQbE243kzESx8zZ8VMpxMb0rDJy-GT4DZn5wJkgb86xBHrUO2yLWV0fIL7QOxjn0yWVXx5gRo9PYxgE8-YDI_f9RxuemGj1j2BXROJwx09dbxX1t_3G_7DkNI4m-vCpAPsOkb7nYjlC_tVdp-1LO-MqZVUjyrkjt3ARK4lVR81e7LV"><div class="absolute inset-0 heatmap-overlay mix-blend-multiply opacity-30"></div><div class="absolute top-6 left-6 px-4 py-2 bg-white/90 backdrop-blur-md rounded-full border border-outline shadow-sm z-20"><span class="text-label-mono text-[10px] font-bold text-primary">SECTION A: APPAREL</span></div><div class="absolute bottom-6 right-6 px-4 py-2 bg-white/90 backdrop-blur-md rounded-full border border-outline shadow-sm z-20"><span class="text-label-mono text-[10px] font-bold text-primary">SECTION D: CHECKOUT</span></div></div></div>
+<!-- Live CCTV & Alerts -->
+<div class="col-span-4 flex flex-col gap-gutter">
+<div class="glass-card p-4 rounded-xl" style="transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-label-mono text-[10px] font-bold uppercase tracking-widest text-primary">Live Streams</h3>
+<div class="flex gap-1.5 items-center bg-red-50 px-3 py-1 rounded-full text-red-600 border border-red-100">
+<div class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></div>
+<span class="text-[10px] font-bold uppercase">REC</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="aspect-video relative bg-slate-900 rounded-lg overflow-hidden group cursor-pointer border border-outline">
+<img alt="CCTV 1" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxPEmfDobvdCMz1izYpXbpr5S2yRsbotJ8ZCAsVt-f7X3iAJG-oD-uaqXCB6omix592KKgshe53XQL1e5t-FGUP2WLAN2_3uO0AuTtpZblPrI3OtTeorfvFrS-oXC0oyHWtT4pqr9Zz651yN9a3kXbF-RxPPaj5Sg3FVm7aJPyQBupvAex7q8D7hgddzO_-Zs9hy3q3Iq9iDyfcHpjiSeLm1hXNuEU-9zZ8ieFKTeaIVcvWysuiXHw7qSG2g1OMqhrgOL0R9kDGfY0">
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded-full text-[9px] font-mono text-white">CAM_01</div>
+<div class="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(64,145,108,0.8)]"></div>
+</div>
+<div class="aspect-video relative bg-slate-900 rounded-lg overflow-hidden group cursor-pointer border border-outline">
+<img alt="CCTV 2" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyCxBKql1U3Sh-KOwf5wBt2CdAGDlbIumtkGhpXswF3dfCHIlEAH81HLMv2BFL9grpJFhZMQZQHRYtMHqTxupva8Cvb6-nsZvywJeXIL3ctm10ugJUwT8C4sbERhwxMydOFPpsIDSsKT6xmhNfl10CKjRffSes2sBrZuPtR4-ssCwuGoqNLMAmHGRyeQgNVsDBcpolDalBQ_vCtf0ISbjZqirrkksyNP4LkmmTTgXjBMfjbB2t-1jWiuIS6PaOqhKQFZCtVvV_aNi0">
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded-full text-[9px] font-mono text-white">CAM_02</div>
+<div class="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(64,145,108,0.8)]"></div>
+</div>
+<div class="aspect-video relative bg-slate-900 rounded-lg overflow-hidden group cursor-pointer border border-outline">
+<img alt="CCTV 3" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeE_qwbqmcurse251HK40L9_xAd_lx1ELwTqRVquaMJlwfT_ZXjKswjbkwM55HCmi-j13hIZxNe6DOkckQk13rJkeHGsdtTZPOQeUckI10D2Yg1R-bAJ_r8K07oFgaZFMmGnLOkk0q-0B71f8r1S1_gBAxUFyTbAVW-H922zilIjwV1mg8r9TZ_4irXoM7OAs_5nV7KRJDZDsCIpjiL9KjixMP--8smvkC64vIgV7dr07mqq6dtuY97xxlLbAVAouVTSt5V38TQ8sm">
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded-full text-[9px] font-mono text-white">CAM_03</div>
+<div class="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-error"></div>
+</div>
+<div class="aspect-video relative bg-slate-900 rounded-lg overflow-hidden group cursor-pointer border border-outline">
+<img alt="CCTV 4" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUbeZeD4Z9uSD5RYufp3BlJxHxL0MkkzOSHotxm5_ER1aeMXMtkIYRoSc8FXGikKP5zKe2LY5Yolzj_y7HkwGYEHuMN7SF1zoDNJ1KjXmAUu08J-2WzTVIbHlLqb7JzXajVJKg-40Jv7NpQaYupCGAotXvM4brYhrS3mAC8rDkcMjgvlL1FDX9wuSZ1PkZafkY8eihaalgHUloh_eA11mFeUwsf8OSTeVXi2xT-uhw0wRCimGgCsi77Y1va8Xyzxpz3SzPCUYlpVu5">
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded-full text-[9px] font-mono text-white">CAM_04</div>
+<div class="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(64,145,108,0.8)]"></div>
+</div>
+</div>
+</div>
+<div class="glass-card flex-1 p-5 rounded-xl flex flex-col h-full overflow-hidden" style="transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);">
+<h3 class="text-label-mono text-[10px] font-bold uppercase tracking-widest mb-4 text-primary">Security Feed</h3>
+<div class="space-y-4 overflow-y-auto pr-2"><div class="flex gap-4 items-start border-l-4 border-error/50 bg-error/5 p-4 rounded-r-xl mb-3">
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-mono text-[9px] text-error font-bold px-2 py-0.5 bg-white/80 rounded-full border border-error/20">CRITICAL</span>
+<span class="text-[9px] text-on-surface-variant/60 font-bold">14:22:01</span>
+</div>
+<p class="text-[11px] leading-snug text-on-surface font-medium">Cam_03: Unidentified access to Restricted Stockroom B.</p>
+</div>
+</div>
+<div class="flex gap-4 items-start border-l-4 border-tertiary/50 bg-tertiary/5 p-4 rounded-r-xl">
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-mono text-[9px] text-tertiary font-bold px-2 py-0.5 bg-white/80 rounded-full border border-tertiary/20">WARNING</span>
+<span class="text-[9px] text-on-surface-variant/60 font-bold">14:18:45</span>
+</div>
+<p class="text-[11px] leading-snug text-on-surface font-medium">Checkout Lane 2: Queue length 8+ people. Response required.</p>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Cursor Glow Follower
+        document.addEventListener('mousemove', (e) => {
+            document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+            document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+        });
+
+        // 2. Glass Card Tilt
+        const cards = document.querySelectorAll('.glass-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 40; 
+                const rotateY = (centerX - x) / 40;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)`;
+            });
+        });
+
+        // 3. Metric Counter Animation
+        const animateNumbers = () => {
+            const numberElements = document.querySelectorAll('.animate-number');
+            numberElements.forEach(el => {
+                const target = parseFloat(el.getAttribute('data-target'));
+                const decimals = parseInt(el.getAttribute('data-decimals') || '0');
+                const duration = 1500;
+                const start = 0;
+                const startTime = performance.now();
+
+                const update = (now) => {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
+                    const current = start + (target - start) * easeProgress;
+                    
+                    el.textContent = current.toFixed(decimals);
+
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                };
+                requestAnimationFrame(update);
+            });
+        };
+
+        // 4. Progress Ring Animation
+        const animateProgressRing = () => {
+            const circle = document.querySelector('#health-progress');
+            if (circle) {
+                const circumference = 264; 
+                setTimeout(() => {
+                    const offset = circumference - (92 / 100 * circumference);
+                    circle.style.strokeDashoffset = offset;
+                }, 100);
+            }
+        };
+
+        // 5. AI Insight Staggered Entry
+        const animateAIInsights = () => {
+            const insights = document.querySelectorAll('.ai-insight-card');
+            insights.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, index * 150 + 400);
+            });
+        };
+
+        // Initialize all animations
+        animateNumbers();
+        animateProgressRing();
+        animateAIInsights();
+    });
+</script>
+
+
+</body></html>

@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      # Paste your NeonDB connection string here (e.g., postgresql://[user]:[password]@[host]/[dbname]?sslmode=require)
+      - DATABASE_URL=postgresql://neondb_owner:npg_3VFOfemIKCY2@ep-bitter-river-aomzuy7d-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+      - rabbitmq
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m app.workers.event_consumer
+    volumes:
+      - .:/app
+    environment:
+      # Paste your NeonDB connection string here as well
+      - DATABASE_URL=postgresql://neondb_owner:npg_3VFOfemIKCY2@ep-bitter-river-aomzuy7d-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+
+  cv_pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile.ml
+    environment:
+      - DATABASE_URL=postgresql://neondb_owner:npg_3VFOfemIKCY2@ep-bitter-river-aomzuy7d-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/app
+
+  pos_mocker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python mock_pos.py
+    environment:
+      - DATABASE_URL=postgresql://neondb_owner:npg_3VFOfemIKCY2@ep-bitter-river-aomzuy7d-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    depends_on:
+      - backend
+    volumes:
+      - .:/app
